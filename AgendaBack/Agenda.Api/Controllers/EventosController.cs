@@ -1,83 +1,78 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Agenda.Context;
+using Agenda.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Agenda.Api.Controllers
 {
-    public class EventosController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EventosController : ControllerBase
     {
-        // GET: EventosController
-        public ActionResult Index()
+        private readonly AgendaDbContext _agendaDbContext;
+
+        public EventosController(AgendaDbContext agendaDbContext)
         {
-            return View();
+            _agendaDbContext = agendaDbContext;
         }
 
-        // GET: EventosController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Evento>>> GetEventosAsync()
         {
-            return View();
+            if (_agendaDbContext.Eventos == null)
+            {
+                return NotFound();
+            }
+            return await _agendaDbContext.Eventos.ToListAsync();
         }
 
-        // GET: EventosController/Create
-        public ActionResult Create()
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Evento>> GetEvento(int id)
         {
-            return View();
+            if (_agendaDbContext.Eventos == null)
+            {
+                return NotFound();
+            }
+            var evento = await _agendaDbContext.Eventos.FindAsync(id);
+
+            if (evento == null)
+            {
+                return NotFound();
+            }
+
+            return evento;
         }
 
-        // POST: EventosController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult<Evento>> Create(Evento evento)
         {
-            try
+            if (_agendaDbContext.Eventos == null)
             {
-                return RedirectToAction(nameof(Index));
+                return Problem("Entity set 'AgendaDbContext.Eventos' null.");
             }
-            catch
-            {
-                return View();
-            }
+            _agendaDbContext.Eventos.Add(evento);
+            await _agendaDbContext.SaveChangesAsync();
+
+            return CreatedAtAction("GetEvento", new { id = evento.Id }, evento);
         }
 
-        // GET: EventosController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            return View();
-        }
+            if (_agendaDbContext.Eventos == null)
+            {
+                return NotFound();
+            }
+            var cliente = await _agendaDbContext.Eventos.FindAsync(id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
 
-        // POST: EventosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            _agendaDbContext.Eventos.Remove(cliente);
+            await _agendaDbContext.SaveChangesAsync();
 
-        // GET: EventosController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: EventosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return NoContent();
         }
     }
 }
