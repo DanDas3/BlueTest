@@ -7,6 +7,6 @@ namespace Agenda.Context
     {
         public AgendaDbContext(DbContextOptions<AgendaDbContext> options) : base(options) { }
 
-        public DbSet<Evento> Eventos { get; set; }
+        public DbSet<Contato> Contatos { get; set; }
     }
 }

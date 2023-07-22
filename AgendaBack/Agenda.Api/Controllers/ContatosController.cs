@@ -7,33 +7,33 @@ namespace Agenda.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EventosController : ControllerBase
+    public class ContatosController : ControllerBase
     {
         private readonly AgendaDbContext _agendaDbContext;
 
-        public EventosController(AgendaDbContext agendaDbContext)
+        public ContatosController(AgendaDbContext agendaDbContext)
         {
             _agendaDbContext = agendaDbContext;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Evento>>> GetEventosAsync()
+        public async Task<ActionResult<IEnumerable<Contato>>> GetContatosAsync()
         {
-            if (_agendaDbContext.Eventos == null)
+            if (_agendaDbContext.Contatos == null)
             {
                 return NotFound();
             }
-            return await _agendaDbContext.Eventos.ToListAsync();
+            return await _agendaDbContext.Contatos.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Evento>> GetEvento(int id)
+        public async Task<ActionResult<Contato>> GetContato(int id)
         {
-            if (_agendaDbContext.Eventos == null)
+            if (_agendaDbContext.Contatos == null)
             {
                 return NotFound();
             }
-            var evento = await _agendaDbContext.Eventos.FindAsync(id);
+            var evento = await _agendaDbContext.Contatos.FindAsync(id);
 
             if (evento == null)
             {
@@ -44,32 +44,32 @@ namespace Agenda.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Evento>> Create(Evento evento)
+        public async Task<ActionResult<Contato>> Create(Contato evento)
         {
-            if (_agendaDbContext.Eventos == null)
+            if (_agendaDbContext.Contatos == null)
             {
-                return Problem("Entity set 'AgendaDbContext.Eventos' null.");
+                return Problem("Entity set 'AgendaDbContext.Contatos' null.");
             }
-            _agendaDbContext.Eventos.Add(evento);
+            _agendaDbContext.Contatos.Add(evento);
             await _agendaDbContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetEvento", new { id = evento.Id }, evento);
+            return CreatedAtAction("GetContato", new { id = evento.Id }, evento);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            if (_agendaDbContext.Eventos == null)
+            if (_agendaDbContext.Contatos == null)
             {
                 return NotFound();
             }
-            var cliente = await _agendaDbContext.Eventos.FindAsync(id);
+            var cliente = await _agendaDbContext.Contatos.FindAsync(id);
             if (cliente == null)
             {
                 return NotFound();
             }
 
-            _agendaDbContext.Eventos.Remove(cliente);
+            _agendaDbContext.Contatos.Remove(cliente);
             await _agendaDbContext.SaveChangesAsync();
 
             return NoContent();
