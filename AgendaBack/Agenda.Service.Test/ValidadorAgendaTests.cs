@@ -26,7 +26,7 @@ namespace Agenda.Service.Test
         }
 
         [Test]
-        public void ValidarContato_ChamadoComPropedadeNomeNullOuVazio_LancaExcecaoTipoArgumentNullException()
+        public void ValidarContato_ChamadoComPropedadeNomeNullOuVazio_LancaExcecaoTipoAgendaException()
         {
             Assert.Throws(Is.TypeOf<AgendaException>()
                 .And.Message.EqualTo("Nome do contato vazio."),
@@ -34,7 +34,7 @@ namespace Agenda.Service.Test
         }
 
         [Test]
-        public void ValidarContato_ChamadoComPropedadeTelefoneNullOuVazio_LancaExcecaoTipoArgumentNullException()
+        public void ValidarContato_ChamadoComPropedadeTelefoneNullOuVazio_LancaExcecaoTipoAgendaException()
         {
             _contato.Nome = "teste";
             Assert.Throws(Is.TypeOf<AgendaException>()
@@ -43,7 +43,7 @@ namespace Agenda.Service.Test
         }
 
         [Test]
-        public void ValidarContato_ChamadoComPropedadeTelefoneComLetras_LancaExcecaoTipoArgumentNullException()
+        public void ValidarContato_ChamadoComPropedadeTelefoneComLetras_LancaExcecaoTipoAgendaException()
         {
             _contato.Nome = "teste";
             _contato.Telefone = "aaa";
@@ -53,7 +53,7 @@ namespace Agenda.Service.Test
         }
 
         [Test]
-        public void ValidarContato_ChamadoComPropedadeEmailForaPadrao_LancaExcecaoTipoArgumentNullException()
+        public void ValidarContato_ChamadoComPropedadeEmailForaPadrao_LancaExcecaoTipoAgendaException()
         {
             _contato.Nome = "teste";
             _contato.Telefone = "12345678900";
