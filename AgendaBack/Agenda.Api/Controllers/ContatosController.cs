@@ -1,5 +1,7 @@
 ﻿using Agenda.Context;
 using Agenda.Model;
+using Agenda.Service;
+using Agenda.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,11 +9,11 @@ namespace Agenda.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ContatosController : ControllerBase
+    public class ContatoController : ControllerBase
     {
         private readonly AgendaDbContext _agendaDbContext;
 
-        public ContatosController(AgendaDbContext agendaDbContext)
+        public ContatoController(AgendaDbContext agendaDbContext)
         {
             _agendaDbContext = agendaDbContext;
         }
@@ -44,16 +46,47 @@ namespace Agenda.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Contato>> Create(Contato evento)
+        public async Task<ActionResult<Contato>> Create(Contato contato)
         {
             if (_agendaDbContext.Contatos == null)
             {
-                return Problem("Entity set 'AgendaDbContext.Contatos' null.");
+                return Problem("Erro no sitema.");
             }
-            _agendaDbContext.Contatos.Add(evento);
+            IValidadorAgenda validadorAgenda = new ValidadorAgenda();
+            validadorAgenda.ValidarContato(contato);
+            _agendaDbContext.Contatos.Add(contato);
             await _agendaDbContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetContato", new { id = evento.Id }, evento);
+            return CreatedAtAction("GetContato", new { id = contato.Id }, contato);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCliente(int id, Contato contato)
+        {
+            if (id != contato.Id)
+            {
+                return BadRequest();
+            }
+
+            _agendaDbContext.Entry(contato).State = EntityState.Modified;
+
+            try
+            {
+                await _agendaDbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ExisteContato(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -73,6 +106,11 @@ namespace Agenda.Api.Controllers
             await _agendaDbContext.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private bool ExisteContato(int id)
+        {
+            return (_agendaDbContext.Contatos?.Any(c => c.Id == id)).GetValueOrDefault();
         }
     }
 }

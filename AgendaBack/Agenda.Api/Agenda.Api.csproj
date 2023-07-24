@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Agenda.Context\Agenda.Context.csproj" />
+    <ProjectReference Include="..\Agenda.Service\Agenda.Service.csproj" />
   </ItemGroup>
 
 </Project>
